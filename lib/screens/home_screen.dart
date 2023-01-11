@@ -10,33 +10,25 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static const int timeLimit = 60 * 25;
-  int time = timeLimit;
-  int totalPomodoros = 0;
+  static int time = 60 * 25;
   late Timer timer;
 
+  late num minute = (time / 60) as int;
+  late num second = time % 60;
   bool isRunning = false;
 
-  String _format(int seconds) {
-    var duration = Duration(seconds: seconds);
-    String durationTime = duration.toString().split('.').first;
-
-    return durationTime.substring(2, durationTime.length);
+  void _timeDecrease() {
+    minute = (time ~/ 60);
+    second = time % 60;
   }
 
   void onTick(Timer timer) {
-    if (time == 0) {
-      setState(() {
-        totalPomodoros++;
-        isRunning = false;
-        time = timeLimit;
-      });
-      timer.cancel();
-    } else {
-      setState(() {
-        time--;
-      });
-    }
+    setState(() {
+      time--;
+      // _timeDecrease를 호출하면 실행이 안 됨.
+      //_timeDecrease()를 호출해야 원하는 값 나옴
+      _timeDecrease();
+    });
   }
 
   void onStartPressed() {
@@ -68,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Container(
               alignment: Alignment.bottomCenter,
               child: Text(
-                _format(time),
+                second < 10 ? "$minute:0$second" : "$minute:$second",
                 style: TextStyle(
                     color: Theme.of(context).cardColor,
                     fontSize: 78,
@@ -114,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         Text(
-                          '$totalPomodoros',
+                          '0',
                           style: TextStyle(
                             fontSize: 57,
                             fontWeight: FontWeight.w600,
